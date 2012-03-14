@@ -113,7 +113,13 @@ class Build
       end
 
       def notifications
-        Travis::Notifications::SecureConfig.decrypt((config || {}).fetch(:notifications, {}), repository.key)
+        decrypted_config = Travis::Notifications::SecureConfig.decrypt((config || {})
+        decrypted_config.fetch(:notifications, {}), repository.key)
+      rescue StandardError => e
+        puts '----------------------------------'
+        puts e.inspect
+        puts config.inspect
+        puts '----------------------------------'
       end
   end
 end
