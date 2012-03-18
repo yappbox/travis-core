@@ -55,4 +55,20 @@ describe Travis::GithubApi do
 
   end
 
+  describe '.repositories_for_user' do
+
+    it 'should get all repositories' do
+      client_stub = stub.tap do |client|
+        client.expects(:repositories).with('owner', {:per_page => 100})
+      end
+
+      Octokit::Client.stubs(:new).
+        with(:auto_traversal => true).
+        returns(client_stub)
+
+      Travis::GithubApi.repositories_for_user('owner')
+    end
+
+  end
+
 end

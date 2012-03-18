@@ -37,6 +37,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'simple_states',     '~> 0.1.0.pre2'
 
   # apis
-  s.add_dependency 'octokit',           '~> 0.6.5'
+  s.add_dependency 'octokit',           '~> 1.0.0'
   s.add_dependency 'pusher',            '~> 0.9.2'
 end

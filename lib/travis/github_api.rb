@@ -29,7 +29,8 @@ module Travis
       end
 
       def repositories_for_user(login)
-        Octokit.repositories(login, :per_page => 9999)
+        client = Octokit::Client.new(:auto_traversal => true)
+        client.repositories(login, :per_page => 100)
       end
     end
   end
