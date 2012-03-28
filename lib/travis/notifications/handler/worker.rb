@@ -30,7 +30,12 @@ module Travis
           end
 
           def enqueue(job)
-            publisher_for(job).publish(Payload.for(job))
+            begin
+              publisher_for(job).publish(Payload.for(job))
+            rescue => e
+              puts e.message
+              puts e.backtrace.join("\n")
+            end
           end
 
           protected
