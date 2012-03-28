@@ -11,6 +11,7 @@ gem 'metriks',        :git => 'git://github.com/mattmatt/metriks.git', :ref => '
 gem 'gh',             :git => 'git://github.com/rkh/gh.git'
 gem 'redis',          '~> 2.2.2'
 gem 'rollout',        '~> 1.1.0'
+gem 'hubble',          :git => 'git://github.com/mattmatt/hubble.git'
 
 platform :mri do
   gem 'amq-client',    '>= 0.9.1'

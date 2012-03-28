@@ -33,8 +33,7 @@ module Travis
             begin
               publisher_for(job).publish(Payload.for(job))
             rescue => e
-              puts e.message
-              puts e.backtrace.join("\n")
+              Hubble.report(e, :job => job.id, :repository => repository.slug)
             end
           end
 
