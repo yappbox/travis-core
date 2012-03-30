@@ -101,7 +101,7 @@ describe Travis::Notifications::Handler::Irc do
       custom_irc_config({ 'channels' => ["irc.freenode.net:1234#travis"] , 'template' => ["%{repository_url} (%{commit}) : %{message} %{foo} ", "Build details: %{build_url}"] })
     end
 
-    it "should print a multiple line messages" do
+    it "prints a multiple line messages" do
       build = Factory(:successful_build, :config => multiple_template)
 
       expect_irc('irc.freenode.net', { :port => '1234' })
@@ -117,7 +117,7 @@ describe Travis::Notifications::Handler::Irc do
       expected.each_with_index { |expected, ix| irc.output[ix].should == expected }
     end
 
-    it "should print a single line messages" do
+    it "prints a single line messages" do
       build = Factory(:successful_build, :config => simple_template)
 
       expect_irc('irc.freenode.net', { :port => '1234' })
@@ -129,6 +129,14 @@ describe Travis::Notifications::Handler::Irc do
         'PRIVMSG #travis :[travis-ci] svenfuchs/successful_build (62aae5f): The build passed.',
       ]
       expected.each_with_index { |expected, ix| irc.output[ix].should == expected }
+    end
+
+    context "different for sucess and failure" do
+      let(:sucess_template) { "%{repository_url} (%{commit}): %{message} %{foo}" }
+      let(:failure_template) { ["%{repository_url} (%{commit}) : %{message} %{foo} ", "Build details: %{build_url}"] }
+      let(:template) do
+        custom_irc_config({ 'channels' => ["irc.freenode.net:1234#travis"], 'template' => { :on_success => sucess_template, :on_failure =>  failure_template } })
+      end
     end
   end
 
