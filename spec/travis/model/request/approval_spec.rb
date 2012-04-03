@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'support/active_record'
+require 'travis/features'
  # && !rails_fork?
 
 describe Request::Approval do
@@ -35,6 +36,18 @@ describe Request::Approval do
     it 'does not accept a request that belongs to the github_pages branch' do
       request.commit.stubs(:github_pages?).returns(true)
       request.accept?.should be_false
+    end
+  end
+
+  describe :whitelisted? do
+    it "is true if the feature is active" do
+      Travis::Features.stubs(:active?).with(:whitelisted, request.repository).returns(true)
+      request.whitelisted?.should be_true
+    end
+
+    it "is false if the feature is not active" do
+      Travis::Features.stubs(:active?).with(:whitelisted, request.repository).returns(false)
+      request.whitelisted?.should be_false
     end
   end
 end

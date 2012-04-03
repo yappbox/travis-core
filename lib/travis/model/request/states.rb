@@ -43,7 +43,11 @@ class Request
         end
 
         def create_build!
-          builds.create!(:repository => repository, :commit => commit, :config => config, :owner => owner)
+          builds.create!(:repository => repository, :commit => commit, :config => filter(config), :owner => owner)
+        end
+
+        def filter(config)
+          whitelisted? ? config : config.delete(:timeouts)
         end
     end
   end

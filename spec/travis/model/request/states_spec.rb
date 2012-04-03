@@ -10,7 +10,7 @@ class RequestMock
   attr_accessor :state
   def save!; end
   def commit; @commit ||= stub('commit', :branch => 'master') end
-  def repository; @repository||= stub(:slug => 'foo/bar') end
+  def repository; @repository ||= stub(:slug => 'foo/bar') end
   def attribute_names; %w(id repository_id state source payload) end
 end
 
@@ -22,6 +22,22 @@ describe Request::States do
     xit 'notifies about a created event for each test job in the build matrix' do
       Travis::Notifications.expects(:dispatch).with('job:test:created', anything).once
       request.create_build!
+    end
+  end
+
+  describe :filter do
+    let(:config) { { :rvm => '1.8.7', :timeouts => { :before_install => 300, :install => 300, :before_script => 300, :script => 600, :after_script => 120 } } }
+
+    it "doesn't touch the timeouts of a non-whitelisted repo" do
+      request.stubs(:whitelisted?).returns(true)
+      request.send(:filter, config)
+      config.should == config
+    end
+
+    it "filters the timeouts of a non-whitelisted repo" do
+      request.stubs(:whitelisted?).returns(false)
+      request.send(:filter, config)
+      config.should == { :rvm => '1.8.7' }
     end
   end
 
@@ -243,5 +259,9 @@ describe Request::States do
       result = request.send(:extract_attributes, { :state => :finished, :status => 1, 'source' => 'github' })
       result.should == { :state => :finished, :source => 'github' }
     end
+  end
+
+  describe 'filter' do
+    it 'filters the timeouts for a non-whitelisted repo'
   end
 end

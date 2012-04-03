@@ -121,9 +121,9 @@ ActiveRecord::Schema.define(:version => 20120324104051) do
     t.text     "description"
     t.string   "last_build_language"
     t.integer  "last_build_duration"
-    t.boolean  "private",                :default => false
     t.integer  "owner_id"
     t.string   "owner_type"
+    t.boolean  "private",                :default => false
   end
 
   add_index "repositories", ["last_build_started_at"], :name => "index_repositories_on_last_build_started_at"
