@@ -128,81 +128,105 @@ describe Request do
       it_should_behave_like 'does not create a configure job'
     end
 
-    describe 'with a payload that contains a commit' do
-      describe 'for repository belonging to a user' do
-        let(:payload) { GITHUB_PAYLOADS['gem-release'] }
-        login = 'svenfuchs'
-        type  = 'user'
+    share_examples_fo 'a github event' do
+      describe 'with a payload that contains a commit' do
+        describe 'for repository belonging to a user' do
+          let(:payload) { payloads[:with_commit][:user] }
+          login = 'svenfuchs'
+          type  = 'user'
 
-        describe 'if the user exists' do
-          before(:each) { Factory(:user, :login => login) }
-          it_should_behave_like 'an accepted request', type, login
-          it_should_behave_like 'does not create a user'
+          describe 'if the user exists' do
+            before(:each) { Factory(:user, :login => login) }
+            it_should_behave_like 'an accepted request', type, login
+            it_should_behave_like 'does not create a user'
+          end
+
+          describe 'if the user does not exist' do
+            before(:each) { User.delete_all }
+            it_should_behave_like 'an accepted request', type, login
+            it_should_behave_like 'creates an object from the github api', type, login
+          end
         end
 
-        describe 'if the user does not exist' do
-          before(:each) { User.delete_all }
-          it_should_behave_like 'an accepted request', type, login
-          it_should_behave_like 'creates an object from the github api', type, login
+        describe 'for repository belonging to an organization' do
+          let(:payload) { payloads[:with_commit][:org] }
+          login = 'travis-ci'
+          type  = 'organization'
+
+          describe 'if the organization exists' do
+            before(:each) { Factory(:org, :login => login) }
+            it_should_behave_like 'an accepted request', type, login
+            it_should_behave_like 'does not create an organization'
+          end
+
+          describe 'if the organization does not exist' do
+            before(:each) { Organization.delete_all }
+            it_should_behave_like 'an accepted request', type, login
+            it_should_behave_like 'creates an object from the github api', type, login
+          end
         end
       end
 
-      describe 'for repository belonging to an organization' do
-        let(:payload) { GITHUB_PAYLOADS['travis-core'] }
-        login = 'travis-ci'
-        type  = 'organization'
+      describe 'with a payload that does not contain a commit' do
+        describe 'for a repository belonging to a user' do
+          let(:payload) { payloads[:without_commit][:user] }
+          login = 'LTe'
+          type  = 'user'
 
-        describe 'if the organization exists' do
-          before(:each) { Factory(:org, :login => login) }
-          it_should_behave_like 'an accepted request', type, login
-          it_should_behave_like 'does not create an organization'
+          describe 'if the user exists' do
+            before(:each) { Factory(:user, :login => login) }
+            it_should_behave_like 'a rejected request', type, login
+            it_should_behave_like 'does not create a user'
+          end
+
+          describe 'if the user does not exist' do
+            before(:each) { User.delete_all }
+            it_should_behave_like 'a rejected request', type, login
+            it_should_behave_like 'creates an object from the github api', type, login
+          end
         end
 
-        describe 'if the organization does not exist' do
-          before(:each) { Organization.delete_all }
-          it_should_behave_like 'an accepted request', type, login
-          it_should_behave_like 'creates an object from the github api', type, login
+        describe 'for a repository belonging to an organization' do
+          let(:payload) { payloads[:without_commit][:org] }
+          login = 'travis-ci'
+          type  = 'organization'
+
+          describe 'if the organization exists' do
+            before(:each) { Factory(:org, :login => login) }
+            it_should_behave_like 'a rejected request', type, login
+            it_should_behave_like 'does not create an organization'
+          end
+
+          describe 'if the organization does not exist' do
+            before(:each) { User.delete_all }
+            it_should_behave_like 'a rejected request', type, login
+            it_should_behave_like 'creates an object from the github api', type, login
+          end
         end
       end
     end
+  end
 
-    describe 'with a payload that does not contain a commit' do
-      describe 'for a repository belonging to a user' do
-        let(:payload) { GITHUB_PAYLOADS['force-no-commit'] }
-        login = 'LTe'
-        type  = 'user'
+  # describe 'a github pull-request event' do
+  #   let(:payload) { ... }
+  #   it_should_behave_like 'a github event'
+  # end
 
-        describe 'if the user exists' do
-          before(:each) { Factory(:user, :login => login) }
-          it_should_behave_like 'a rejected request', type, login
-          it_should_behave_like 'does not create a user'
-        end
-
-        describe 'if the user does not exist' do
-          before(:each) { User.delete_all }
-          it_should_behave_like 'a rejected request', type, login
-          it_should_behave_like 'creates an object from the github api', type, login
-        end
-      end
-
-      describe 'for a repository belonging to an organization' do
-        let(:payload) { GITHUB_PAYLOADS['travis-core-no-commit'] }
-        login = 'travis-ci'
-        type  = 'organization'
-
-        describe 'if the organization exists' do
-          before(:each) { Factory(:org, :login => login) }
-          it_should_behave_like 'a rejected request', type, login
-          it_should_behave_like 'does not create an organization'
-        end
-
-        describe 'if the organization does not exist' do
-          before(:each) { User.delete_all }
-          it_should_behave_like 'a rejected request', type, login
-          it_should_behave_like 'creates an object from the github api', type, login
-        end
-      end
+  describe 'a github push event' do
+    let(:payloads) do
+      {
+        :with_commit => {
+          :user => GITHUB_PAYLOADS['gem-release'],
+          :org  => GITHUB_PAYLOADS['travis-core']
+        },
+        :without_commit => {
+          :user => GITHUB_PAYLOADS['force-no-commit'],
+          :org  => GITHUB_PAYLOADS['travis-core-no-commit']
+        }
+      }
     end
+
+    it_should_behave_like 'a github event'
   end
 
   describe 'repository_for' do
