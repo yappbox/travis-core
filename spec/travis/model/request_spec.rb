@@ -128,7 +128,7 @@ describe Request do
       it_should_behave_like 'does not create a configure job'
     end
 
-    share_examples_fo 'a github event' do
+    share_examples_for 'a github event' do
       describe 'with a payload that contains a commit' do
         describe 'for repository belonging to a user' do
           let(:payload) { payloads[:with_commit][:user] }
