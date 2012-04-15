@@ -20,15 +20,13 @@ describe Request do
   describe 'create_from' do
     let(:request) { Request.create_from(payload, 'token') }
 
-    subject { lambda { request } }
-
     shared_examples_for 'creates a request and repository' do
       it 'creates a request for the given payload' do
-        subject.should change(Request, :count).by(1)
+        expect { request }.to change(Request, :count).by(1)
       end
 
       it 'creates a repository' do
-        subject.should change(Repository, :count).by(1)
+        expect { request }.to change(Repository, :count).by(1)
       end
 
       it 'sets the payload to the request' do
@@ -64,11 +62,11 @@ describe Request do
 
     shared_examples_for 'creates a commit and configure job' do
       it 'creates a commit' do
-        subject.should change(Commit, :count).by(1)
+        expect { request }.to change(Commit, :count).by(1)
       end
 
       it 'creates a configure job' do
-        subject.should change(Job::Configure, :count).by(1)
+        expect { request }.to change(Job::Configure, :count).by(1)
       end
     end
 
@@ -88,30 +86,30 @@ describe Request do
 
     shared_examples_for 'does not create a configure job' do
       it 'does not create a configure job' do
-        subject.should_not change(Job::Configure, :count)
+        expect { request }.not_to change(Job::Configure, :count)
       end
     end
 
     shared_examples_for 'creates an object from the github api' do |type, name|
       it 'creates the object' do
-        subject.should change(type.camelize.constantize, :count).by(1)
+        expect { request }.to change(type.camelize.constantize, :count).by(1)
       end
 
       it 'calls the github api to populate the user' do
-        subject.call
+        request
         assert_requested requests["https://api.github.com/#{type == 'organization' ? 'orgs' : 'users'}/#{name}"]
       end
     end
 
     shared_examples_for 'does not create a user' do
       it 'does not create a user' do
-        subject.should_not change(User, :count)
+        expect { request }.not_to change(User, :count)
       end
     end
 
     shared_examples_for 'does not create an organization' do
       it 'does not create an organization' do
-        subject.should_not change(Organization, :count)
+        expect { request }.not_to change(Organization, :count)
       end
     end
 
@@ -205,28 +203,28 @@ describe Request do
         end
       end
     end
-  end
 
-  # describe 'a github pull-request event' do
-  #   let(:payload) { ... }
-  #   it_should_behave_like 'a github event'
-  # end
+    # describe 'a github pull-request event' do
+    #   let(:payload) { ... }
+    #   it_should_behave_like 'a github event'
+    # end
 
-  describe 'a github push event' do
-    let(:payloads) do
-      {
-        :with_commit => {
-          :user => GITHUB_PAYLOADS['gem-release'],
-          :org  => GITHUB_PAYLOADS['travis-core']
-        },
-        :without_commit => {
-          :user => GITHUB_PAYLOADS['force-no-commit'],
-          :org  => GITHUB_PAYLOADS['travis-core-no-commit']
+    describe 'a github push event' do
+      let(:payloads) do
+        {
+          :with_commit => {
+            :user => GITHUB_PAYLOADS['gem-release'],
+            :org  => GITHUB_PAYLOADS['travis-core']
+          },
+          :without_commit => {
+            :user => GITHUB_PAYLOADS['force-no-commit'],
+            :org  => GITHUB_PAYLOADS['travis-core-no-commit']
+          }
         }
-      }
-    end
+      end
 
-    it_should_behave_like 'a github event'
+      it_should_behave_like 'a github event'
+    end
   end
 
   describe 'repository_for' do
