@@ -97,6 +97,14 @@ module Support
             :last_error => nil
           }
         end
+
+        let(:organization) do
+          stub 'organization', {
+            :id => 1,
+            :name => 'Travis CI',
+            :login => 'travis-ci',
+          }
+        end
       end
     end
   end
