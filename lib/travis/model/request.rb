@@ -16,7 +16,7 @@ class Request < ActiveRecord::Base
   class << self
     def receive(type, data, token)
       request = Factory.new(type, data, token).request
-      request.start!
+      request.start! if request
     end
 
     def last_by_head_commit(head_commit)
