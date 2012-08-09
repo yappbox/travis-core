@@ -1,6 +1,6 @@
 language: ruby
 rvm:
-  - 1.9.3
+  - jruby-head
   - jruby-18mode
   - jruby-19mode
 jdk:
