@@ -19,8 +19,8 @@ module Travis
 
     class << self
       def run(type, data, options = {})
-        if false && Travis.env == 'staging'
-          publisher('tasks').publish(:data => data, :options => options)
+        if Travis.env == 'staging'
+          publisher('tasks').publish(:type => type, :data => data, :options => options)
         else
           const_get(type.to_s.camelize).new(data, options).run
         end
@@ -45,7 +45,7 @@ module Travis
     rescues    :run, :from => Exception
     instrument :run
     new_relic  :run, :category => :task
-    async      :run # unless Travis.env == 'staging'
+    async      :run unless Travis.env == 'staging'
 
     private
 
