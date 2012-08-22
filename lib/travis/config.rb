@@ -28,11 +28,11 @@ module Travis
       end
 
       def load_env
-        @load_env ||= YAML.load(ENV['travis_config']) if ENV['travis_config']
+        @load_env ||= ENV['travis_config'] ? YAML.load(ENV['travis_config']) : {}
       end
 
       def load_file
-        @load_file ||= YAML.load_file(filename)[Travis.env] if File.exists?(filename) rescue {}
+        @load_file ||= File.exists?(filename) ? YAML.load_file(filename)[Travis.env] : {} rescue {}
       end
 
       def filename
@@ -97,8 +97,8 @@ module Travis
 
     default :_access => [:key]
 
-    def initialize(data = nil, *args)
-      data = self.class.normalize(data || self.class.load_env || self.class.load_file || {})
+    def initialize(data = {}, *args)
+      data = self.class.normalize(self.class.load_file.merge(self.class.load_env.merge(data || {})))
       super
     end
 
