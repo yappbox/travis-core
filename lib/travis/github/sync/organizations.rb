@@ -2,7 +2,7 @@ require 'gh'
 
 module Travis
   module Github
-    module Sync
+    class Sync
       class Organizations
         extend Travis::Instrumentation
 

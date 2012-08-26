@@ -27,6 +27,10 @@ describe Travis::Config do
   end
 
   describe 'defaults' do
+    it 'sync.count defaults to 1' do
+      config.sync.count.should == 1
+    end
+
     it 'notifications defaults to []' do
       config.notifications.should == []
     end

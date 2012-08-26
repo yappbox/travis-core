@@ -1,6 +1,6 @@
 module Travis
   module Github
-    module Sync
+    class Sync
       class Repository
         class << self
           def unpermit_all(user, repositories)

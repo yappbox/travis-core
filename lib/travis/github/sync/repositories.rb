@@ -2,7 +2,7 @@ require 'active_support/core_ext/class/attribute'
 
 module Travis
   module Github
-    module Sync
+    class Sync
       # Fetches all repositories from Github which are in /user/repos or any of the user's
       # orgs/[name]/repos. Creates or updates existing repositories on our side and adds
       # it to the user's permissions. Also removes existing permissions for repositories

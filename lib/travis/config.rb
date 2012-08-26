@@ -78,6 +78,7 @@ module Travis
 
     define  :host          => 'travis-ci.org',
             :shorten_host  => 'trvs.io',
+            :sync          => { :count => 1 },
             :assets        => { :host => HOSTS[Travis.env.to_sym], :version => defined?(Travis::Assets) ? Travis::Assets.version : 'asset-id', :interval => 15 },
             :amqp          => { :username => 'guest', :password => 'guest', :host => 'localhost', :prefetch => 1 },
             :database      => { :adapter => 'postgresql', :database => "travis_#{Travis.env}", :encoding => 'unicode', :min_messages => 'warning' },

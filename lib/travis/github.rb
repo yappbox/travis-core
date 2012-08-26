@@ -7,6 +7,10 @@ module Travis
     autoload :Sync,         'travis/github/sync'
 
     class << self
+      def sync(options = {})
+        Sync.new(options).run
+      end
+
       def authenticated(user, &block)
         fail "we don't have a github token for #{inspect}" if user.github_oauth_token.blank?
         GH.with(:token => user.github_oauth_token, &block)
