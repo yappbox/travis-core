@@ -1,6 +1,7 @@
 require 'faraday'
 require 'core_ext/hash/compact'
 require 'active_support/core_ext/string'
+require 'active_support/core_ext/hash/keys'
 
 module Travis
   class Task
@@ -35,7 +36,7 @@ module Travis
 
     def initialize(data, options = {})
       @data = data
-      @options = options
+      @options = options.symbolize_keys
     end
 
     def run
