@@ -6,7 +6,7 @@ module Travis
       class Organizations
         class << self
           def cancel_memberships(user, orgs)
-            user.memberships.where(:organization_id => orgs.map(&:id)).delete_all
+            user.memberships.where(:organization_id => orgs.map(&:id)).delete_all unless orgs.empty?
           end
         end
 
