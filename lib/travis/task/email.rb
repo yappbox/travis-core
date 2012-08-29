@@ -6,6 +6,8 @@ module Travis
 
     # Sends out build notification emails using ActionMailer.
     class Email < Task
+      include Logging
+
       def recipients
         options[:recipients]
       end
@@ -18,6 +20,8 @@ module Travis
 
         def process
           Travis::Mailer::Build.send(type, data, recipients).deliver
+        rescue Postmark::InvalidMessageError => e
+          raise Exceptions::ClientError.new(self, e)
         end
 
         Notification::Instrument::Task::Email.attach_to(self)

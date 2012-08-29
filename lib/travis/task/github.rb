@@ -30,9 +30,7 @@ module Travis
           end
           info "Successfully commented on #{url}."
         rescue Faraday::Error::ClientError => e
-          message = e.message
-          message += ": #{e.response[:status]} #{e.response[:body]}" if e.response
-          error "Could not comment on #{url} (#{message})."
+          raise Exceptions::FaradayError.new(self, e, :url => url, :raise => true)
         end
 
         def authenticated(&block)

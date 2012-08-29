@@ -51,6 +51,8 @@ module Travis
             req.body = MultiJson.encode({ :message => { :body => line } })
             req.headers['Content-Type'] = 'application/json'
           end
+        rescue Faraday::Error::ClientError => e
+          raise Exceptions::FaradayError.new(self, e, :url => url)
         end
 
         def parse(target)

@@ -35,11 +35,11 @@ module Travis
         def send_messages(host, port, ssl, channels)
           client(host, nick, :port => port, :ssl => (ssl == :ssl)) do |client|
             channels.each do |channel|
-                send_message(client, channel)
-                info("Successfully notified #{host}:#{port}##{channel}")
               begin
+                send_message(client, channel)
+                info("Successfully notified irc://#{nick}@#{host}:#{port}##{channel}")
               rescue StandardError => e
-                error("Could not notify #{host}:#{port}##{channel} : #{e.inspect}")
+                raise Exceptions::ClientError.new(self, e, "irc://#{nick}@#{host}:#{port}##{channel}")
               end
             end
           end

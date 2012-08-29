@@ -13,12 +13,16 @@ module Travis
         end
 
         def store(data)
-          response = http.put(url_for(data), data.to_json)
-          log_request(response)
+          url = url_for(data)
+          response = http.put(url, data.to_json)
+          info "Successfully archived to #{url}."
           response.success?
+        rescue Faraday::Error::ClientError => e
+          raise Exceptions::FaradayError.new(self, e, :url => url, :raise => true)
         end
 
         def touch(data)
+          # TODO how to deal with this
           build = Build.find_by_id(data['id'])
           build.touch(:archived_at) if build
         end
@@ -29,15 +33,6 @@ module Travis
 
         def url_for(data)
           "http://#{config.username}:#{CGI.escape(config.password)}@#{config.host}/builds/#{data['id']}"
-        end
-
-        def log_request(response)
-          severity, message = if response.success?
-            [:info, "Successfully archived #{response.env[:url].to_s}."]
-          else
-            [:error, "Could not archive to #{response.env[:url].to_s}. Status: #{response.status} (#{response.body.inspect})"]
-          end
-          send(severity, message)
         end
 
         Notification::Instrument::Task::Archive.attach_to(self)

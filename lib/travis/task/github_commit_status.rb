@@ -27,9 +27,7 @@ module Travis
           end
           info "Successfully updated the PR status on #{full_url}."
         rescue Faraday::Error::ClientError => e
-          message = e.message
-          message += ": #{e.response[:status]} #{e.response[:body]}" if e.response
-          error "Could not update the PR status on #{full_url} (#{message})."
+          raise Exceptions::FaradayError.new(self, e, :url => url, :raise => true)
         end
 
         def authenticated(&block)

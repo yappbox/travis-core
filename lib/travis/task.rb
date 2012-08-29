@@ -7,6 +7,7 @@ module Travis
     autoload :Archive,            'travis/task/archive'
     autoload :Campfire,           'travis/task/campfire'
     autoload :Email,              'travis/task/email'
+    autoload :Exceptions,         'travis/task/exceptions'
     autoload :Github,             'travis/task/github'
     autoload :GithubCommitStatus, 'travis/task/github_commit_status'
     autoload :Hipchat,            'travis/task/hipchat'
@@ -15,7 +16,7 @@ module Travis
     autoload :Webhook,            'travis/task/webhook'
 
     include Logging
-    extend  Instrumentation, NewRelic, Exceptions::Handling, Async
+    extend  Instrumentation, NewRelic, Travis::Exceptions::Handling, Async
 
     class << self
       def run(type, data, options = {})
@@ -40,6 +41,10 @@ module Travis
 
     def run
       process
+    rescue Exceptions::ClientError => e
+      error(e.message)
+      raise(e) if e.raise?
+      # TODO somehow add a note to the build if this task is triggered from .travis.yml
     end
 
     rescues    :run, :from => Exception
@@ -52,6 +57,7 @@ module Travis
       def http
         @http ||= Faraday.new(http_options) do |f|
           f.request :url_encoded
+          f.response :raise_error
           f.adapter :net_http
         end
       end

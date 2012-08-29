@@ -55,6 +55,8 @@ module Travis
               :color => (build_passed? ? 'green' : 'red')
             }
           end
+        rescue Faraday::Error::ClientError => e
+          raise Exceptions::FaradayError.new(self, e, :url => "#{url} (#{room_id})")
         end
 
         def parse(target)
