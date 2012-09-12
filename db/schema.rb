@@ -14,13 +14,12 @@
 ActiveRecord::Schema.define(:version => 20120911230001) do
 
   create_table "artifact_parts", :force => true do |t|
-    t.integer "job_id"
     t.integer "artifact_id"
     t.string  "content"
-    t.integer "sequence"
+    t.integer "number"
   end
 
-  add_index "artifact_parts", ["sequence"], :name => "index_artifact_parts_on_sequence"
+  add_index "artifact_parts", ["artifact_id", "number"], :name => "index_artifact_parts_on_artifact_id_and_number"
 
   create_table "artifacts", :force => true do |t|
     t.text     "content"
@@ -56,6 +55,7 @@ ActiveRecord::Schema.define(:version => 20120911230001) do
   end
 
   add_index "builds", ["repository_id", "state"], :name => "index_builds_on_repository_id_and_state"
+  add_index "builds", ["state"], :name => "index_builds_on_state"
 
   create_table "commits", :force => true do |t|
     t.integer  "repository_id"

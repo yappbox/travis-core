@@ -13,7 +13,7 @@ describe Artifact::Log do
       Travis::Features.disable_for_all(:log_aggregation)
     end
 
-    describe 'given no sequence number' do
+    describe 'given no part number' do
       describe 'append' do
         it 'appends streamed build log chunks' do
           0.upto(2) { |ix| Artifact::Log.append(job.id, lines[ix]) }
@@ -36,13 +36,13 @@ describe Artifact::Log do
       end
     end
 
-    describe 'given a sequence number and :log_aggregation being activated' do
+    describe 'given a part number and :log_aggregation being activated' do
       before :each do
         Travis::Features.enable_for_all(:log_aggregation)
       end
 
       describe 'append' do
-        it 'creates a log part with the given sequence' do
+        it 'creates a log part with the given number' do
           Artifact::Log.append(log.id, lines.first, 1)
           log.parts.first.content.should == lines.first
         end
@@ -73,6 +73,7 @@ describe Artifact::Log do
       describe 'aggregate' do
         before :each do
           lines.each_with_index { |line, ix| Artifact::Log.append(log.id, line, ix) }
+          Artifact::Log.append(log.id + 1, 'foo', 1)
           Artifact::Log.aggregate(log.id)
           log.reload
         end
@@ -86,7 +87,7 @@ describe Artifact::Log do
         end
 
         it 'deletes the content parts from the parts table' do
-          Artifact::Part.all.should be_empty
+          log.parts.should be_empty
         end
       end
     end
