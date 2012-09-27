@@ -84,11 +84,11 @@ describe Build, 'denormalization' do
       end
 
       it 'denormalizes last_build_started_at to its repository' do
-        repository.last_build_started_at.should == push.started_at
+        repository.last_build_started_at.to_s.should == push.started_at.to_s
       end
 
       it 'denormalizes last_build_finished_at to its repository' do
-        repository.last_build_finished_at.should == push.finished_at
+        repository.last_build_finished_at.to_s.should == push.finished_at.to_s
       end
     end
 
@@ -108,7 +108,7 @@ describe Build, 'denormalization' do
       end
 
       it 'denormalizes last_build_finished_at to its repository' do
-        repository.last_build_finished_at.should == push.finished_at
+        repository.last_build_finished_at.to_s.should == push.finished_at.to_s
       end
     end
   end
