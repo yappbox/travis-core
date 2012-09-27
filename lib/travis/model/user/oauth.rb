@@ -1,11 +1,15 @@
 class User
   module Oauth
+    extend Travis::Retryable
+
     class << self
       def find_or_create_by(payload)
-        attrs = attributes_from(payload)
-        user = User.find_by_github_id(attrs['github_id'])
-        user ? user.update_attributes(attrs) : user = User.create!(attrs)
-        user
+        retryable(:tries => 3) do
+          attrs = attributes_from(payload)
+          user = User.find_by_github_id(attrs['github_id'])
+          user ? user.update_attributes(attrs) : user = User.create!(attrs)
+          user
+        end
       end
 
       def attributes_from(payload)

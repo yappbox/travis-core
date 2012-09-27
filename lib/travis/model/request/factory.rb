@@ -1,6 +1,7 @@
 class Request
   class Factory
-    extend Travis::Instrumentation
+    extend  Travis::Instrumentation
+    include Travis::Retryable
 
     attr_reader :type, :data, :token
 
@@ -45,8 +46,10 @@ class Request
       def repository
         @repository ||= begin
           data = payload.repository
-          Repository.find_or_create_by_owner_name_and_name(owner.login, data[:name]).tap do |repo|
-            repo.update_attributes! data.merge(:owner => owner)
+          retryable(:tries => 3) do
+            Repository.find_or_create_by_owner_name_and_name(owner.login, data[:name]).tap do |repo|
+              repo.update_attributes! data.merge(:owner => owner)
+            end
           end
         end
       end
