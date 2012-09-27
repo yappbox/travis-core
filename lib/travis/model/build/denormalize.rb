@@ -20,7 +20,7 @@ class Build
     }
 
     def denormalize?(event)
-      DENORMALIZE.key?(event)
+      DENORMALIZE.key?(event) && !pull_request?
     end
 
     def denormalize_attributes_for(event)
