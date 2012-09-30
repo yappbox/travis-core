@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120915150000) do
+ActiveRecord::Schema.define(:version => 20120930200000) do
 
   create_table "artifact_parts", :force => true do |t|
     t.integer "artifact_id"
@@ -157,7 +157,7 @@ ActiveRecord::Schema.define(:version => 20120915150000) do
   end
 
   add_index "repositories", ["last_build_started_at"], :name => "index_repositories_on_last_build_started_at"
-  add_index "repositories", ["owner_name", "name"], :name => "index_repositories_on_owner_name_and_name"
+  add_index "repositories", ["owner_name", "name"], :name => "index_repositories_on_owner_name_and_name", :unique => true
 
   create_table "requests", :force => true do |t|
     t.integer  "repository_id"
@@ -220,7 +220,7 @@ ActiveRecord::Schema.define(:version => 20120915150000) do
     t.datetime "synced_at"
   end
 
-  add_index "users", ["github_id"], :name => "index_users_on_github_id"
+  add_index "users", ["github_id"], :name => "index_users_on_github_id", :unique => true
   add_index "users", ["github_oauth_token"], :name => "index_users_on_github_oauth_token"
   add_index "users", ["login"], :name => "index_users_on_login", :unique => true
 
