@@ -22,11 +22,15 @@ module Travis
         }
       end
 
-      private
+      def process!
+        comment
+      end
 
-        def process
-          comment if has_access?
-        end
+      def process?
+        has_access?
+      end
+
+      private
 
         def has_access?
           authenticated { GH.head(url) }

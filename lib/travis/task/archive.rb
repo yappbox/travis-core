@@ -6,11 +6,16 @@ module Travis
     # Archives a Build to a couchdb once it is finished so we can purge old
     # build data at any time.
     class Archive < Task
-      private
 
-        def process
-          touch(data) if store(data)
-        end
+      def process!
+        touch(data)
+      end
+
+      def process?
+        store(data)
+      end
+
+      private
 
         def store(data)
           response = http.put(url_for(data), data.to_json)

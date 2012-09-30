@@ -10,17 +10,17 @@ describe Travis::Notification::Instrument::Task::Flowdock do
 
   before :each do
     Travis::Notification.publishers.replace([publisher])
-    task.stubs(:process)
-    task.run
+    task.stubs(:process!)
+    task.process
   end
 
   it 'publishes a payload' do
     event.except(:payload).should == {
-      :message => "travis.task.flowdock.run:completed",
+      :message => "travis.task.flowdock.process:completed",
       :uuid => Travis.uuid
     }
     event[:payload].except(:data).should == {
-      :msg => 'Travis::Task::Flowdock#run for #<Build id=1>',
+      :msg => 'Travis::Task::Flowdock#process for #<Build id=1>',
       :repository => 'svenfuchs/minimal',
       :object_id => 1,
       :object_type => 'Build',

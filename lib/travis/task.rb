@@ -44,13 +44,20 @@ module Travis
     end
 
     def run
-      process
+      process if process?
     end
-
     rescues    :run, :from => Exception
-    instrument :run
-    new_relic  :run, :category => :task
     async      :run # unless Travis.env == 'staging'
+
+    def process
+      process!
+    end
+    instrument :process
+    new_relic  :process, :category => :task
+
+    def process?
+      true
+    end
 
     private
 

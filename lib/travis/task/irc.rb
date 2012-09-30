@@ -22,15 +22,19 @@ module Travis
         end
       end
 
-      private
-
-        def process
-          # Notifications to the same host are grouped so that they can be sent with a single connection
-          channels.each do |server, channels|
-            host, port, ssl = *server
-            send_messages(host, port, ssl, channels)
-          end
+      def process!
+        # Notifications to the same host are grouped so that they can be sent with a single connection
+        channels.each do |server, channels|
+          host, port, ssl = *server
+          send_messages(host, port, ssl, channels)
         end
+      end
+
+      def process?
+        channels.any?
+      end
+
+      private
 
         def send_messages(host, port, ssl, channels)
           client(host, nick, client_options(port, ssl)) do |client|

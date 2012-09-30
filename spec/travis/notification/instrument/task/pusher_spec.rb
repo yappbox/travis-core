@@ -8,8 +8,8 @@ describe Travis::Notification::Instrument::Task::Pusher do
 
   before :each do
     Travis::Notification.publishers.replace([publisher])
-    task.stubs(:process)
-    task.run
+    task.stubs(:process!)
+    task.process
   end
 
   describe 'given a job:started event' do
@@ -18,11 +18,11 @@ describe Travis::Notification::Instrument::Task::Pusher do
 
     it 'publishes a payload' do
       event.except(:payload).should == {
-        :message => "travis.task.pusher.run:completed",
+        :message => "travis.task.pusher.process:completed",
                 :uuid => Travis.uuid
       }
       event[:payload].except(:data).should == {
-        :msg => 'Travis::Task::Pusher#run for #<Job id=1> (channels: common)',
+        :msg => 'Travis::Task::Pusher#process for #<Job id=1> (channels: common)',
         # :repository => 'svenfuchs/minimal', # TODO
         :object_id => 1,
         :object_type => 'Job',
@@ -40,11 +40,11 @@ describe Travis::Notification::Instrument::Task::Pusher do
 
     it 'publishes a payload' do
       event.except(:payload).should == {
-        :message => "travis.task.pusher.run:completed",
+        :message => "travis.task.pusher.process:completed",
         :uuid => Travis.uuid
       }
       event[:payload].except(:data).should == {
-        :msg => 'Travis::Task::Pusher#run for #<Build id=1> (channels: common)',
+        :msg => 'Travis::Task::Pusher#process for #<Build id=1> (channels: common)',
         # :repository => 'svenfuchs/minimal', # TODO
         :object_id => 1,
         :object_type => 'Build',

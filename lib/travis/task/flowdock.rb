@@ -40,11 +40,15 @@ EOT
         end
       end
 
-      private
+      def process!
+        targets.each { |target| send_message(target) }
+      end
 
-        def process
-          targets.each { |target| send_message(target) }
-        end
+      def process?
+        targets.any?
+      end
+
+      private
 
         def send_message(target)
           url = team_inbox_url_for(target)

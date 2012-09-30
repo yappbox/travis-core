@@ -10,18 +10,18 @@ describe Travis::Notification::Instrument::Task::Archive do
 
   before :each do
     Travis::Notification.publishers.replace([publisher])
-    task.stubs(:process)
-    task.run
+    task.stubs(:process!)
+    task.process
   end
 
   it 'publishes a payload' do
     publisher.events
     event.except(:payload).should == {
-      :message => "travis.task.archive.run:completed",
+      :message => "travis.task.archive.process:completed",
       :uuid => Travis.uuid
     }
     event[:payload].except(:data).should == {
-      :msg => 'Travis::Task::Archive#run for #<Build id=1>',
+      :msg => 'Travis::Task::Archive#process for #<Build id=1>',
       :repository => 'svenfuchs/minimal',
       :object_id => 1,
       :object_type => 'Build'

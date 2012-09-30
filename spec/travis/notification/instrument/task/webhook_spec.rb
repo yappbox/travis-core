@@ -10,17 +10,17 @@ describe Travis::Notification::Instrument::Task::Webhook do
 
   before :each do
     Travis::Notification.publishers.replace([publisher])
-    task.stubs(:process)
-    task.run
+    task.stubs(:process!)
+    task.process
   end
 
   it 'publishes a payload' do
     event.except(:payload).should == {
-      :message => "travis.task.webhook.run:completed",
+      :message => "travis.task.webhook.process:completed",
             :uuid => Travis.uuid
     }
     event[:payload].except(:data).should == {
-      :msg => 'Travis::Task::Webhook#run for #<Build id=1>',
+      :msg => 'Travis::Task::Webhook#process for #<Build id=1>',
       :repository => 'svenfuchs/minimal',
       :object_id => 1,
       :object_type => 'Build',

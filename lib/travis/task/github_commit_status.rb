@@ -23,15 +23,15 @@ module Travis
         "The Travis build #{friendly_state}"
       end
 
-      private
-
-        def process
-          authenticated do
-            GH.post(url, :target_url => build_url, :state => state, :description => description)
-          end
-        rescue GH::Error => e
-          error "Could not update the PR status on #{full_url} (#{e.message})."
+      def process!
+        authenticated do
+          GH.post(url, :target_url => build_url, :state => state, :description => description)
         end
+      rescue GH::Error => e
+        error "Could not update the PR status on #{full_url} (#{e.message})."
+      end
+
+      private
 
         def authenticated(&block)
           GH.with(http_options, &block)

@@ -10,11 +10,15 @@ module Travis
         options[:targets]
       end
 
-      private
+      def process!
+        targets.each { |target| send_webhook(target) }
+      end
 
-        def process
-          targets.each { |target| send_webhook(target) }
-        end
+      def process?
+        targets.any?
+      end
+
+      private
 
         def send_webhook(target)
           response = http.post(target) do |req|

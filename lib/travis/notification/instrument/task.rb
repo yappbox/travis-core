@@ -3,9 +3,9 @@ module Travis
     class Instrument
       class Task < Instrument
         class Archive < Task
-          def run_completed
+          def process_completed
             publish(
-              :msg => "#{task.class.name}#run for #<Build id=#{data['id']}>",
+              :msg => "#{task.class.name}#process for #<Build id=#{data['id']}>",
               :repository => data['repository']['slug'],
               # :request_id => data['request_id'], # TODO
               :object_type => 'Build',
@@ -15,9 +15,9 @@ module Travis
         end
 
         class Campfire < Task
-          def run_completed
+          def process_completed
             publish(
-              :msg => "#{task.class.name}#run for #<Build id=#{data['build']['id']}>",
+              :msg => "#{task.class.name}#process for #<Build id=#{data['build']['id']}>",
               :repository => data['repository']['slug'],
               # :request_id => data['request']['id'], # TODO
               :object_type => 'Build',
@@ -29,9 +29,9 @@ module Travis
         end
 
         class Flowdock < Task
-          def run_completed
+          def process_completed
             publish(
-              :msg => "#{task.class.name}#run for #<Build id=#{data['build']['id']}>",
+              :msg => "#{task.class.name}#process for #<Build id=#{data['build']['id']}>",
               :repository => data['repository']['slug'],
               # :request_id => data['request']['id'], # TODO
               :object_type => 'Build',
@@ -43,9 +43,9 @@ module Travis
         end
 
         class Hipchat < Task
-          def run_completed
+          def process_completed
             publish(
-              :msg => "#{task.class.name}#run for #<Build id=#{data['build']['id']}>",
+              :msg => "#{task.class.name}#process for #<Build id=#{data['build']['id']}>",
               :repository => data['repository']['slug'],
               # :request_id => data['request']['id'], # TODO
               :object_type => 'Build',
@@ -57,9 +57,9 @@ module Travis
         end
 
         class Email < Task
-          def run_completed
+          def process_completed
             publish(
-              :msg => "#{task.class.name}#run for #<Build id=#{data['build']['id']}>",
+              :msg => "#{task.class.name}#process for #<Build id=#{data['build']['id']}>",
               :repository => data['repository']['slug'],
               # :request_id => data['request_id'], # TODO
               :object_type => 'Build',
@@ -71,9 +71,9 @@ module Travis
         end
 
         class Github < Task
-          def run_completed
+          def process_completed
             publish(
-              :msg => "#{task.class.name}#run for #<Build id=#{data['build']['id']}>",
+              :msg => "#{task.class.name}#process for #<Build id=#{data['build']['id']}>",
               :repository => data['repository']['slug'],
               # :request_id => data['request_id'], # TODO
               :object_type => 'Build',
@@ -85,9 +85,9 @@ module Travis
         end
 
         class GithubCommitStatus < Task
-          def run_completed
+          def process_completed
             publish(
-              :msg => "#{task.class.name}#run for #<Build id=#{data['build']['id']}>",
+              :msg => "#{task.class.name}#process for #<Build id=#{data['build']['id']}>",
               :repository => data['repository']['slug'],
               # :request_id => data['request_id'], # TODO
               :object_type => 'Build',
@@ -98,9 +98,9 @@ module Travis
         end
 
         class Irc < Task
-          def run_completed
+          def process_completed
             publish(
-              :msg => "#{task.class.name}#run for #<Build id=#{data['build']['id']}>",
+              :msg => "#{task.class.name}#process for #<Build id=#{data['build']['id']}>",
               :repository => data['repository']['slug'],
               # :request_id => data['request_id'], # TODO
               :object_type => 'Build',
@@ -112,9 +112,9 @@ module Travis
         end
 
         class Pusher < Task
-          def run_completed
+          def process_completed
             publish(
-              :msg => "#{task.class.name}#run for #<#{type.camelize} id=#{id}> (channels: #{task.channels.join(', ')})",
+              :msg => "#{task.class.name}#process for #<#{type.camelize} id=#{id}> (channels: #{task.channels.join(', ')})",
               # :repository => data['repository']['slug'],
               # :request_id => data['request_id'], # TODO
               :object_type => type.camelize,
@@ -136,9 +136,9 @@ module Travis
         end
 
         class Webhook < Task
-          def run_completed
+          def process_completed
             publish(
-              :msg => "#{task.class.name}#run for #<Build id=#{data['id']}>",
+              :msg => "#{task.class.name}#process for #<Build id=#{data['id']}>",
               :repository => data['repository'].values_at(*%w(owner_name name)).join('/'),
               # :request_id => data['request_id'], # TODO
               :object_type => 'Build',
@@ -156,7 +156,7 @@ module Travis
           super
         end
 
-        def run_completed
+        def process_completed
           publish
         end
 

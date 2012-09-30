@@ -15,17 +15,17 @@ describe Travis::Notification::Instrument::Task::Irc do
     Url.stubs(:shorten).returns(url)
 
     Travis::Notification.publishers.replace([publisher])
-    task.stubs(:process)
-    task.run
+    task.stubs(:process!)
+    task.process
   end
 
   it 'publishes a payload' do
     event.except(:payload).should == {
-      :message => "travis.task.irc.run:completed",
+      :message => "travis.task.irc.process:completed",
             :uuid => Travis.uuid
     }
     event[:payload].except(:data).should == {
-      :msg => 'Travis::Task::Irc#run for #<Build id=1>',
+      :msg => 'Travis::Task::Irc#process for #<Build id=1>',
       :repository => 'svenfuchs/minimal',
       :object_id => 1,
       :object_type => 'Build',

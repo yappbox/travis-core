@@ -26,11 +26,11 @@ module Travis
         end
       end
 
-      private
+      def process!
+        channels.each { |channel| trigger(channel, data) }
+      end
 
-        def process
-          channels.each { |channel| trigger(channel, data) }
-        end
+      private
 
         def trigger(channel, data)
           prefix = version == 'v1' ? nil : version

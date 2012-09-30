@@ -14,13 +14,15 @@ module Travis
         :"#{data['build']['state']}_email"
       end
 
-      private
+      def process!
+        Travis::Mailer::Build.send(type, data, recipients).deliver
+      end
 
-        def process
-          Travis::Mailer::Build.send(type, data, recipients).deliver
-        end
+      def process?
+        recipients.any?
+      end
 
-        Notification::Instrument::Task::Email.attach_to(self)
+      Notification::Instrument::Task::Email.attach_to(self)
     end
   end
 end
