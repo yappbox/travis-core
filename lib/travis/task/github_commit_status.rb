@@ -11,6 +11,10 @@ module Travis
         options[:url]
       end
 
+      def full_url
+        GH.api_host + url
+      end
+
       def build_url
         options[:build_url]
       end
@@ -25,9 +29,8 @@ module Travis
           authenticated do
             GH.post(url, :target_url => build_url, :state => state, :description => description)
           end
-          info "Successfully updated the PR status on #{full_url}."
-        rescue Faraday::Error::ClientError => e
-          raise Exceptions::FaradayError.new(self, e, :url => url, :raise => true)
+        rescue GH::Error => e
+          raise Exceptions::GHError.new(self, e, :url => url, :raise => true)
         end
 
         def authenticated(&block)
@@ -59,10 +62,6 @@ module Travis
           when 1
             'failed'
           end
-        end
-
-        def full_url
-          GH.api_host + url
         end
 
         Notification::Instrument::Task::GithubCommitStatus.attach_to(self)

@@ -31,6 +31,14 @@ module Travis
           message
         end
       end
+
+      class GHError < ClientError
+        def message
+          message = "#{super} (#{metadata[:url]})"
+          message = "#{message}: #{error.info[:response_status]} #{error.info[:response_body]}" if error.info[:response_status]
+          message
+        end
+      end
     end
   end
 end

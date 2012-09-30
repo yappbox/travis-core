@@ -28,6 +28,20 @@ module Travis
           end
         end
 
+        class Flowdock < Task
+          def run_completed
+            publish(
+              :msg => "#{task.class.name}#run for #<Build id=#{data['build']['id']}>",
+              :repository => data['repository']['slug'],
+              # :request_id => data['request']['id'], # TODO
+              :object_type => 'Build',
+              :object_id => data['build']['id'],
+              :targets => task.targets,
+              :message => task.message
+            )
+          end
+        end
+
         class Hipchat < Task
           def run_completed
             publish(
@@ -78,7 +92,7 @@ module Travis
               # :request_id => data['request_id'], # TODO
               :object_type => 'Build',
               :object_id => data['build']['id'],
-              :url => task.url
+              :url => task.full_url.to_s
             )
           end
         end
@@ -100,7 +114,7 @@ module Travis
         class Pusher < Task
           def run_completed
             publish(
-              :msg => "#{task.class.name}#run for #<#{type.camelize} id=#{id}>",
+              :msg => "#{task.class.name}#run for #<#{type.camelize} id=#{id}> (channels: #{task.channels.join(', ')})",
               # :repository => data['repository']['slug'],
               # :request_id => data['request_id'], # TODO
               :object_type => type.camelize,

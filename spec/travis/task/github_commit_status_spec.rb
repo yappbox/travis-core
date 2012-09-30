@@ -55,14 +55,9 @@ describe Travis::Task::GithubCommitStatus do
   end
 
   describe 'logging' do
-    it 'logs a successful request' do
-      task.expects(:info).with("Successfully updated the PR status on #{url}.")
-      task.run
-    end
-
     it 'warns about a failed request' do
-      GH.stubs(:post).raises(Faraday::Error::ClientError.new(:status => 403, :body => 'nono.'))
-      Travis::Exceptions.expects(:handle).with { |e| e.is_a?(Travis::Task::Exceptions::FaradayError) }
+      GH.stubs(:post).raises(GH::Error.new(nil, nil))
+      Travis::Exceptions.expects(:handle).with { |e| e.is_a?(Travis::Task::Exceptions::GHError) }
       task.run
     end
   end

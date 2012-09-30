@@ -9,6 +9,7 @@ describe Travis::Task::Github do
 
   before do
     GH.stubs(:post)
+    task.stubs(:has_access?).returns(true)
   end
 
   describe 'run' do
@@ -28,8 +29,9 @@ describe Travis::Task::Github do
     end
 
     it 'posts a comment to github' do
-      build.stubs(:result).returns(1)
+      data['build']['result'] = 1
       GH.expects(:post).with do |url, data|
+        puts data[:body]
         data[:body] == "This pull request [fails](http://travis-ci.org/svenfuchs/minimal/builds/#{build.id}) (merged #{request.head_commit[0..7]} into #{request.base_commit[0..7]})."
       end
       task.run
@@ -44,14 +46,9 @@ describe Travis::Task::Github do
   end
 
   describe 'logging' do
-    it 'logs a successful request' do
-      task.expects(:info).with("Successfully commented on #{url}.")
-      task.run
-    end
-
     it 'warns about a failed request' do
-      GH.stubs(:post).raises(Faraday::Error::ClientError.new(:status => 403, :body => 'nono.'))
-      Travis::Exceptions.expects(:handle).with { |e| e.is_a?(Travis::Task::Exceptions::FaradayError) }
+      GH.stubs(:post).raises(GH::Error.new(nil, nil))
+      Travis::Exceptions.expects(:handle).with { |e| e.is_a?(Travis::Task::Exceptions::GHError) }
       task.run
     end
   end
